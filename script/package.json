@@ -1,0 +1,33 @@
+{
+	"name": "@abineo/analytics",
+	"version": "0.13.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/abineo/analytics.git",
+		"directory": "script"
+	},
+	"author": "Christoph Schneider",
+	"license": "SEE LICENSE IN LICENSE",
+	"bugs": {
+		"url": "https://github.com/abineo/analytics/issues"
+	},
+	"homepage": "https://abineo.swiss/analytics",
+	"scripts": {
+		"dev": "rollup -wc",
+		"build": "rimraf dist && rollup -c",
+		"prepublishOnly": "npm run build"
+	},
+	"devDependencies": {
+		"@rollup/plugin-replace": "^5.0.2",
+		"@rollup/plugin-terser": "^0.4.3",
+		"rimraf": "^5.0.1",
+		"rollup": "^3.28.1",
+		"rollup-plugin-output-size": "^1.2.2",
+		"rollup-plugin-strip-code": "^0.2.7"
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/script.min.js"
+}
