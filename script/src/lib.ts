@@ -9,7 +9,10 @@ export function getScrollDistance(element: Element, innerHeight: number) {
 export function getVisitorId(sessionStorage: SessionStorage) {
 	let visitorId = sessionStorage.getItem('abineo:visitor');
 	if (!visitorId) {
-		visitorId = self.crypto?.randomUUID() || Math.random() + '';
+		let array = new BigInt64Array(1);
+		crypto.getRandomValues(array);
+		let n = array[0];
+		visitorId = (n < 0 ? -n : n).toString(16);
 		sessionStorage.setItem('abineo:visitor', visitorId);
 	}
 	return visitorId;
