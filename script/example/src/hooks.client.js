@@ -1,0 +1,1 @@
+import '@abineo/analytics';
