@@ -1,8 +1,5 @@
-export function config(document: Document, name: string, defaultValue?: string) {
-	let value = document.querySelector<HTMLMetaElement>('meta[name=abineo-' + name + ']')?.content;
-	if (value) return value;
-	if (defaultValue) return defaultValue;
-	throw '[Abineo Analytics] Missing configuration: ' + name;
+export function config(document: Document, name: string) {
+	return document.querySelector<HTMLMetaElement>('meta[name=abineo-' + name + ']')?.content;
 }
 
 export function getScrollDistance(element: Element, innerHeight: number) {
@@ -41,7 +38,9 @@ export function Page(location: Location, document: Document, referrer?: string):
 	};
 }
 
-export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Visitor): Api {
+export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Visitor) {
+	if (!project) throw 'missing project id';
+
 	function post(endpoint: string, data: object) {
 		return fetch(apiUrl + '/api/v1/' + project + '/' + endpoint, {
 			body: JSON.stringify(data),
@@ -50,26 +49,26 @@ export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Vi
 		});
 	}
 
-	function trackPageEnter(page: Page) {
-		return post('pageview', { visitor, page });
-	}
-
-	function trackPageExit(page: Page, state: ExitState) {
-		return post('exit', { visitor, page, state });
-	}
-
-	function trackEvent(name: string, data: object, page?: Page) {
-		return post('event', { name, data, visitor, page });
-	}
-
-	return { trackPageEnter, trackPageExit, trackEvent };
+	return {
+		trackPageEnter_: (page: Page) => {
+			return post('pageview', { visitor, page });
+		},
+		trackPageExit_: (page: Page, state: ExitState) => {
+			return post('exit', { visitor, page, state });
+		},
+		trackEvent_: (name: string, data: object, page?: Page) => {
+			return post('event', { name, data, visitor, page });
+		},
+	};
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export type Document = {
-	querySelector<HTMLMetaElement>(selectors: string): HTMLMetaElement | null;
+	querySelector<T extends HTMLElement>(selectors: string): T | null;
 };
+
+export type FetchFn = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
 export type Element = {
 	scrollTop: number;
@@ -115,12 +114,4 @@ export type Page = {
 export type ExitState = {
 	time: number;
 	distance: number;
-};
-
-export type FetchFn = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
-
-export type Api = {
-	trackPageEnter(page: Page): Promise<Response>;
-	trackPageExit(page: Page, state: ExitState): Promise<Response>;
-	trackEvent(name: string, data: object, page?: Page): Promise<Response>;
 };

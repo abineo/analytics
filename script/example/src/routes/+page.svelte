@@ -3,7 +3,7 @@
 
 	onMount(() => {
 		window.Abineo.trackEvent('homepage', {
-			time: new Intl.DateTimeFormat(navigator.languages, { timeStyle: 'short' }).format(new Date())
+			time: new Intl.DateTimeFormat(navigator.languages, { timeStyle: 'full' }).format(new Date())
 		});
 	});
 </script>
