@@ -2,7 +2,7 @@
 
 Visit [abineo.swiss/analytics](https://abineo.swiss/analytics) for more information.
 
-See [Example](./demo/README.md)
+See [Example](./example/README.md)
 
 ## License
 
