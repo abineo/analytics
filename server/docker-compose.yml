@@ -1,5 +1,5 @@
 services:
-  postgres:
+  pg-analytics:
     image: timescale/timescaledb:latest-pg15
     environment:
       POSTGRES_USER: abineo
@@ -8,6 +8,6 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres:/home/postgres/pgdata/data
+      - pg-analytics:/home/postgres/pgdata/data
 volumes:
-  postgres:
+  pg-analytics:
