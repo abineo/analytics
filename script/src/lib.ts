@@ -54,7 +54,7 @@ export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Vi
 
 	return {
 		trackPageEnter_: (page: Page) => {
-			return post('pageview', { visitor, page });
+			return post('visit', { visitor, page });
 		},
 		trackPageExit_: (page: Page, state: ExitState) => {
 			return post('exit', { visitor, page, state });
