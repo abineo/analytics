@@ -14,7 +14,7 @@ let startTime: number;
 let scrollDistance: number;
 let referrer = doc.referrer;
 
-let visitor = Visitor(sessionStorage, navigator, screen);
+let visitor = Visitor(sessionStorage, now, navigator, screen);
 let page = Page(loc, doc, referrer);
 
 let { trackPageEnter_, trackPageExit_, trackEvent_ } = Api(

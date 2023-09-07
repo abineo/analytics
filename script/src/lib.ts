@@ -6,13 +6,10 @@ export function getScrollDistance(element: Element, innerHeight: number) {
 	return element.scrollTop / (element.scrollHeight - innerHeight);
 }
 
-export function getVisitorId(sessionStorage: SessionStorage) {
+export function getVisitorId(sessionStorage: SessionStorage, now: () => number) {
 	let visitorId = sessionStorage.getItem('abineo:visitor');
 	if (!visitorId) {
-		let array = new BigInt64Array(1);
-		crypto.getRandomValues(array);
-		let n = array[0];
-		visitorId = (n < 0 ? -n : n).toString(16);
+		visitorId = now() + '' + Math.ceil(Math.random() * 1000000);
 		sessionStorage.setItem('abineo:visitor', visitorId);
 	}
 	return visitorId;
@@ -20,11 +17,12 @@ export function getVisitorId(sessionStorage: SessionStorage) {
 
 export function Visitor(
 	sessionStorage: SessionStorage,
+	now: () => number,
 	navigator: Navigator,
 	screen: Screen
 ): Visitor {
 	return {
-		id: getVisitorId(sessionStorage),
+		id: getVisitorId(sessionStorage, now),
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		language: navigator.language,
 		screen: [screen.width, screen.height],
