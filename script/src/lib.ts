@@ -113,6 +113,6 @@ export type Page = {
 };
 
 export type ExitState = {
-	time: number;
+	duration: number;
 	distance: number;
 };

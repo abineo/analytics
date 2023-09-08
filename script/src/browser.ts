@@ -32,7 +32,7 @@ function onPageEnter() {
 
 function onPageExit() {
 	let exitState = {
-		time: now() - startTime,
+		duration: now() - startTime,
 		distance: scrollDistance,
 	};
 	return trackPageExit_(page, exitState);
