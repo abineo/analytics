@@ -14,7 +14,7 @@ let startTime: number;
 let scrollDistance: number;
 let referrer = doc.referrer;
 
-let visitor = Visitor(sessionStorage, now, navigator, screen);
+let visitor = Visitor(navigator, screen);
 let page = Page(loc, doc, referrer);
 
 let { trackPageEnter_, trackPageExit_, trackEvent_ } = Api(
@@ -64,5 +64,9 @@ history.pushState = function () {
 
 onPageEnter().then(() => console.log('✅ %sms', now() - startTime));
 
+function trackEvent(name: string, data: object) {
+	return trackEvent_(name, data, page);
+}
+
 // @ts-ignore
-window.Abineo = { trackEvent: trackEvent_ };
+window.Abineo = { trackEvent };

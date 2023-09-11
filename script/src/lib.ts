@@ -6,23 +6,8 @@ export function getScrollDistance(element: Element, innerHeight: number) {
 	return element.scrollTop / (element.scrollHeight - innerHeight);
 }
 
-export function getVisitorId(sessionStorage: SessionStorage, now: () => number) {
-	let visitorId = sessionStorage.getItem('abineo:visitor');
-	if (!visitorId) {
-		visitorId = now() + '' + Math.ceil(Math.random() * 1000000);
-		sessionStorage.setItem('abineo:visitor', visitorId);
-	}
-	return visitorId;
-}
-
-export function Visitor(
-	sessionStorage: SessionStorage,
-	now: () => number,
-	navigator: Navigator,
-	screen: Screen
-): Visitor {
+export function Visitor(navigator: Navigator, screen: Screen): Visitor {
 	return {
-		id: getVisitorId(sessionStorage, now),
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		language: navigator.language,
 		screen: [screen.width, screen.height],
@@ -32,9 +17,8 @@ export function Visitor(
 export function Page(location: Location, document: Document, referrer?: string): Page {
 	return {
 		host: location.host,
-		path: location.pathname,
+		path: document.querySelector<HTMLLinkElement>('link[rel=canonical]')?.href || location.pathname,
 		search: location.search,
-		canonical: document.querySelector<HTMLLinkElement>('link[rel=canonical]')?.href,
 		referrer,
 	};
 }
@@ -57,7 +41,7 @@ export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Vi
 		trackPageExit_: (page: Page, state: ExitState) => {
 			return post('exit', { visitor, page, state });
 		},
-		trackEvent_: (name: string, data: object, page?: Page) => {
+		trackEvent_: (name: string, data: object, page: Page) => {
 			return post('event', { name, data, visitor, page });
 		},
 	};
@@ -74,11 +58,6 @@ export type FetchFn = (input: RequestInfo | URL, init?: RequestInit) => Promise<
 export type Element = {
 	scrollTop: number;
 	scrollHeight: number;
-};
-
-export type SessionStorage = {
-	getItem(key: string): string | null;
-	setItem(key: string, value: string): void;
 };
 
 export type Navigator = {
@@ -98,7 +77,6 @@ export type Location = {
 };
 
 export type Visitor = {
-	id: string;
 	timezone: string;
 	language: string;
 	screen: [number, number];
