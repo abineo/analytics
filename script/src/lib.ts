@@ -30,6 +30,7 @@ export function Api(fetch: FetchFn, apiUrl: string, project: string, visitor: Vi
 		return fetch(apiUrl + '/api/v1/' + project + '/' + endpoint, {
 			body: JSON.stringify(data),
 			method: 'POST',
+			headers: [['content-type', 'application/json']],
 			keepalive: true,
 		});
 	}
