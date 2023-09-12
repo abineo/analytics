@@ -1,6 +1,6 @@
 {
 	"name": "@abineo/analytics",
-	"version": "0.18.1",
+	"version": "0.19.0",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/abineo/analytics.git",
@@ -14,7 +14,7 @@
 	"homepage": "https://abineo.swiss/analytics",
 	"scripts": {
 		"dev": "npm run build -- --watch",
-		"build": "rimraf dist && esbuild src/browser.ts --outfile=dist/browser.min.js --bundle --minify --sourcemap --mangle-props=_$",
+		"build": "rimraf dist && esbuild src/browser.ts --outfile=dist/browser.min.js --bundle --minify --sourcemap",
 		"prepublishOnly": "npm run build"
 	},
 	"devDependencies": {

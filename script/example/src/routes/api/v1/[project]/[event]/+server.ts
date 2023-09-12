@@ -1,6 +1,6 @@
 async function POST({ request, params }) {
 	const data = await request.json();
-	console.info(params.project, params.event, data);
+	console.info(params.event + ':', params.project, data);
 	return new Response();
 }
 

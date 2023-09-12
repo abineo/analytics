@@ -1,4 +1,4 @@
-import { Api, Page, Visitor, config, getScrollDistance } from './lib';
+import { Page, Visitor, config, getScrollDistance } from './lib';
 
 let doc = document;
 let html = doc.documentElement;
@@ -7,6 +7,7 @@ let loc = location;
 let now = Date.now;
 let pushState = history.pushState;
 
+let sessionKey = 'abineo:session';
 let protocol = config(doc, 'protocol') || 'https://';
 let domain = config(doc, 'domain') || 'abineo-analytics.com';
 let project = config(doc, 'project') || '';
@@ -16,26 +17,38 @@ let referrer = doc.referrer;
 
 let visitor = Visitor(navigator, screen);
 let page = Page(loc, doc, referrer);
+let session = sessionStorage.getItem(sessionKey);
 
-let { trackPageEnter_, trackPageExit_, trackEvent_ } = Api(
-	fetch,
-	protocol + domain,
-	project,
-	visitor
-);
+if (!project) throw 'missing project id';
+
+if (!session) {
+	session = crypto.randomUUID();
+	sessionStorage.setItem(sessionKey, session);
+}
+
+function post(endpoint: string, data: object) {
+	return fetch(protocol + domain + '/api/v1/' + project + '/' + endpoint, {
+		body: JSON.stringify(data),
+		method: 'POST',
+		headers: [['content-type', 'application/json']],
+		keepalive: true,
+	});
+}
 
 function onPageEnter() {
 	startTime = now();
 	scrollDistance = getScrollDistance(html, innerHeight);
-	return trackPageEnter_(page);
+	return post('visit', { session, visitor, page }).then((res) => res.text());
 }
 
 function onPageExit() {
-	let exitState = {
-		duration: now() - startTime,
-		distance: scrollDistance,
-	};
-	return trackPageExit_(page, exitState);
+	return post('exit', {
+		session,
+		visitor,
+		page,
+		dur: now() - startTime,
+		dist: scrollDistance,
+	});
 }
 
 doc.addEventListener('scrollend', () => {
@@ -64,9 +77,8 @@ history.pushState = function () {
 
 onPageEnter().then(() => console.log('✅ %sms', now() - startTime));
 
-function trackEvent(name: string, data: object) {
-	return trackEvent_(name, data, page);
-}
-
 // @ts-ignore
-window.Abineo = { trackEvent };
+window.Abineo = {
+	trackEvent: (name: string, data: object = {}) =>
+		post('event', { name, data, session, visitor, page }),
+};
