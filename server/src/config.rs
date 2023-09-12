@@ -1,7 +1,5 @@
-use std::time::Duration;
-
 use serde::Deserialize;
-use tracing::info;
+use tracing::{debug, info};
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(default)]
@@ -15,8 +13,8 @@ pub struct AppConfig {
 pub struct ApiConfig {
     pub host: String,
     pub port: u16,
-    #[serde(with = "humantime_serde")]
-    pub timeout: Duration,
+    pub origin: String,
+    pub secure: bool,
 }
 
 #[derive(Debug, Default, Clone, Deserialize)]
@@ -46,6 +44,7 @@ impl AppConfig {
             .expect("config can be deserialized");
 
         info!("config loaded");
+        debug!("{:?}", &config);
 
         config
     }

@@ -16,10 +16,10 @@ fn main() {
         map.entry(key, format!("\"{}\"", value).as_str());
     }
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("timezone-codegen.rs");
-    let mut file = BufWriter::new(File::create(&path).unwrap());
-    write!(
+    let mut file = BufWriter::new(File::create(path).unwrap());
+    writeln!(
         &mut file,
-        "pub static TIMEZONES: phf::Map<&'static str, &'static str> = {};\n",
+        "pub static TIMEZONES: phf::Map<&'static str, &'static str> = {};",
         map.build()
     )
     .unwrap();

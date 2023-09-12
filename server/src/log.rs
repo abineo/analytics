@@ -15,6 +15,9 @@ pub fn setup() {
 }
 
 fn targets_from_env() -> Targets {
+    #[cfg(feature = "dotenv")]
+    dotenv::dotenv().ok();
+
     let log_level = env::var("LOG_LEVEL").unwrap_or_default();
     match log_level.to_lowercase().as_str() {
         "debug" => debug(),
@@ -26,7 +29,7 @@ fn targets_from_env() -> Targets {
 fn default() -> Targets {
     Targets::new()
         .with_default(Level::WARN)
-        .with_target(env!("CARGO_PKG_NAME").to_case(Case::Snake), Level::DEBUG)
+        .with_target(env!("CARGO_PKG_NAME").to_case(Case::Snake), Level::INFO)
 }
 
 fn debug() -> Targets {

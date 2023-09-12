@@ -1,7 +1,8 @@
 [api]
 host = "::"
 port = 7400
-timeout = "45s"
+origin = ""
+secure = true
 
 [database]
 port = 5432
